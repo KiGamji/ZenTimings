@@ -787,24 +787,20 @@ namespace ZenTimings
             if (hasMemVddio)
             {
                 panel.rowMemVddio.Value = $"{memVddio:F4}V";
-                panel.rowMemVddio.IsEnabled = true;
             }
             else
             {
-                panel.rowMemVddio.IsEnabled = false;
+                panel.rowMemVddio.Value = "N/A";
             }
 
-            // Enabled explicitly, like VDIMM above: the label's default binding is WMIPresent, which a
-            // debug report's window never has.
             float vtt = Convert.ToSingle(Convert.ToDecimal(bmcConfig.MemVtt) / 1000);
             if (vtt > 0)
             {
                 panel.rowMemVtt.Value = $"{vtt:F4}V";
-                panel.rowMemVtt.IsEnabled = true;
             }
             else
             {
-                panel.rowMemVtt.IsEnabled = false;
+                panel.rowMemVtt.Value = "N/A";
             }
 
             var apobConfig = GetApobDdr4ChannelConfig();
@@ -1180,7 +1176,6 @@ namespace ZenTimings
                                 if (hasAsusDramVoltage)
                                 {
                                     (timingsPanel as DDR4TimingsPanel).rowMemVddio.Value = $"{asusDramVoltage:F4}V";
-                                    (timingsPanel as DDR4TimingsPanel).rowMemVddio.IsEnabled = true;
                                 }
                                 else if (hasSuperIoDramVoltage)
                                 {
@@ -1188,7 +1183,7 @@ namespace ZenTimings
                                 }
                                 else if (!ddr4BmcVddioValid)
                                 {
-                                    (timingsPanel as DDR4TimingsPanel).rowMemVddio.IsEnabled = false;
+                                    (timingsPanel as DDR4TimingsPanel).rowMemVddio.Value = "N/A";
                                 }
                             }
 

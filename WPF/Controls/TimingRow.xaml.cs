@@ -1,6 +1,8 @@
-﻿using System.Windows;
+﻿using System.Globalization;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace ZenTimings.Controls
@@ -20,7 +22,12 @@ namespace ZenTimings.Controls
             nameof(Label), typeof(string), typeof(TimingRow), new PropertyMetadata(null));
 
         public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
-            nameof(Value), typeof(string), typeof(TimingRow), new PropertyMetadata(null));
+            nameof(Value), typeof(string), typeof(TimingRow), new PropertyMetadata(null, OnVoltageStateChanged, CoerceDisplayedValue));
+
+        public static readonly DependencyProperty AllowManualVoltageProperty = DependencyProperty.Register(
+            nameof(AllowManualVoltage), typeof(bool), typeof(TimingRow), new PropertyMetadata(false, OnVoltageStateChanged));
+
+        private string manualVoltage;
 
         public static readonly DependencyProperty LabelToolTipProperty = DependencyProperty.Register(
             nameof(LabelToolTip), typeof(object), typeof(TimingRow), new PropertyMetadata(null));
@@ -35,6 +42,102 @@ namespace ZenTimings.Controls
         {
             InitializeComponent();
             ValueColumn.MinWidth = ValueMinWidth;
+            UpdateVoltageState();
+        }
+
+        /// <summary>Allows a voltage to be overridden for display without changing the sensor.</summary>
+        public bool AllowManualVoltage
+        {
+            get => (bool)GetValue(AllowManualVoltageProperty);
+            set => SetValue(AllowManualVoltageProperty, value);
+        }
+
+        // Coercion keeps both the original binding and the latest sensor value intact during refreshes.
+        private static object CoerceDisplayedValue(DependencyObject d, object baseValue)
+        {
+            return ((TimingRow)d).manualVoltage ?? baseValue;
+        }
+
+        private static void OnVoltageStateChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((TimingRow)d).UpdateVoltageState();
+        }
+
+        private bool CanEditVoltage => AllowManualVoltage;
+
+        private void UpdateVoltageState()
+        {
+            if (ValueBlock == null || !AllowManualVoltage)
+                return;
+
+            LabelBlock.IsEnabled = Value != "N/A";
+            ValueBlock.Cursor = CanEditVoltage ? Cursors.Hand : null;
+            ValueBlock.SetCurrentValue(ToolTipProperty, manualVoltage != null
+                ? "Manually entered voltage. Click to edit; clear to reset."
+                : CanEditVoltage ? "Click to enter voltage manually." : ValueToolTip);
+        }
+
+        private void ValueBlock_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (!CanEditVoltage)
+                return;
+
+            VoltageEditor.Text = Value == "N/A" ? "" : Value?.TrimEnd('V', 'v').Trim() ?? "";
+            VoltageEditor.ToolTip = "Enter voltage in volts. Clear and press Enter to restore the sensor value.";
+            VoltageEditor.ClearValue(BorderBrushProperty);
+            VoltageEditor.Height = ValueBlock.ActualHeight;
+            ValueBlock.Visibility = Visibility.Hidden;
+            VoltageEditor.Visibility = Visibility.Visible;
+            VoltageEditor.Focus();
+            VoltageEditor.SelectAll();
+            e.Handled = true;
+        }
+
+        private void VoltageEditor_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Escape)
+            {
+                EndVoltageEdit();
+                e.Handled = true;
+            }
+            else if (e.Key == Key.Enter)
+            {
+                SaveVoltageEdit();
+                e.Handled = true;
+            }
+        }
+
+        private void VoltageEditor_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            if (VoltageEditor.IsVisible)
+                EndVoltageEdit();
+        }
+
+        private void SaveVoltageEdit()
+        {
+            string text = VoltageEditor.Text.Trim().TrimEnd('V', 'v').Trim().Replace(',', '.');
+            if (text.Length == 0)
+                manualVoltage = null;
+            else if (decimal.TryParse(text, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out decimal voltage)
+                && voltage >= 0.0001m && voltage <= 10)
+                manualVoltage = voltage.ToString("F4", CultureInfo.CurrentCulture) + "V";
+            else
+            {
+                VoltageEditor.ToolTip = "Enter a voltage from 0.0001 to 10 V (e.g. 1.35).";
+                VoltageEditor.BorderBrush = Brushes.Red;
+                VoltageEditor.SelectAll();
+                return;
+            }
+
+            CoerceValue(ValueProperty);
+            UpdateVoltageState();
+            EndVoltageEdit();
+        }
+
+        private void EndVoltageEdit()
+        {
+            VoltageEditor.Visibility = Visibility.Collapsed;
+            ValueBlock.Visibility = Visibility.Visible;
         }
 
         /// <summary>Row caption. A string so bindings to it may use StringFormat.</summary>

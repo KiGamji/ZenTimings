@@ -100,13 +100,13 @@
                 <local:TimingRow Label="FCLK" Value="{Binding PowerTable.FCLK, FallbackValue='N/A', StringFormat='{}{0:F2}', Mode=OneWay, Converter={StaticResource FloatToNA}}" IsEnabled="{Binding PowerTable.FCLK, Mode=OneWay, Converter={StaticResource FloatToBool}}" />
                 <local:TimingRow Label="{Binding UclkLabel, FallbackValue='UCLK', Mode=OneWay}" Value="{Binding PowerTable.UCLK, FallbackValue='N/A', StringFormat='{}{0:F2}', Mode=OneWay, Converter={StaticResource FloatToNA}}" IsEnabled="{Binding PowerTable.UCLK, Mode=OneWay, Converter={StaticResource FloatToBool}}" />
                 <TextBlock Style="{DynamicResource DividerTextBlock}" />
-                <local:TimingRow Label="{Binding VsocLabel, FallbackValue='VSOC', Mode=OneWay}" Value="{Binding Vsoc, FallbackValue='N/A', Mode=OneWay, Converter={StaticResource FloatToVoltage}}" IsEnabled="{Binding Vsoc}" />
-                <local:TimingRow Label="CLDO VDDP" Value="{Binding PowerTable.CLDO_VDDP, FallbackValue='N/A', Mode=OneWay, Converter={StaticResource FloatToVoltage}}" IsEnabled="{Binding PowerTable.CLDO_VDDP, Mode=OneWay, Converter={StaticResource FloatToBool}}" />
-                <local:TimingRow Label="MEM VDD" Value="{Binding SwaAdcV, FallbackValue='N/A', Mode=OneWay, Converter={StaticResource FloatToVoltage}}" IsEnabled="{Binding SwaAdcV}" />
-                <local:TimingRow Label="MEM VDDQ" Value="{Binding SwbAdcV, FallbackValue='N/A', Mode=OneWay, Converter={StaticResource FloatToVoltage}}" IsEnabled="{Binding SwbAdcV}" />
-                <local:TimingRow x:Name="rowApuVddio" Label="{Binding VddioLabel, FallbackValue='CPU VDDIO', Mode=OneWay}" Value="{Binding ApuVddio, FallbackValue='N/A', Mode=OneWay, Converter={StaticResource FloatToVoltage}}" IsEnabled="{Binding ApuVddio}" />
-                <local:TimingRow Label="MEM VPP" Value="{Binding VppAdcV, FallbackValue='N/A', Mode=OneWay, Converter={StaticResource FloatToVoltage}}" IsEnabled="{Binding VppAdcV}" />
-                <local:TimingRow x:Name="rowVddMisc" Label="{Binding VmiscLabel, FallbackValue='VDD MISC', Mode=OneWay}" Value="{Binding Vmisc, FallbackValue='N/A', Mode=OneWay, Converter={StaticResource FloatToVoltage}}" IsEnabled="{Binding Vmisc}" />
+                <local:TimingRow Label="{Binding VsocLabel, FallbackValue='VSOC', Mode=OneWay}" Value="{Binding Vsoc, FallbackValue='N/A', Mode=OneWay, Converter={StaticResource FloatToVoltage}}" AllowManualVoltage="True" />
+                <local:TimingRow Label="CLDO VDDP" Value="{Binding PowerTable.CLDO_VDDP, FallbackValue='N/A', Mode=OneWay, Converter={StaticResource FloatToVoltage}}" AllowManualVoltage="True" />
+                <local:TimingRow Label="MEM VDD" Value="{Binding SwaAdcV, FallbackValue='N/A', Mode=OneWay, Converter={StaticResource FloatToVoltage}}" AllowManualVoltage="True" />
+                <local:TimingRow Label="MEM VDDQ" Value="{Binding SwbAdcV, FallbackValue='N/A', Mode=OneWay, Converter={StaticResource FloatToVoltage}}" AllowManualVoltage="True" />
+                <local:TimingRow x:Name="rowApuVddio" Label="{Binding VddioLabel, FallbackValue='CPU VDDIO', Mode=OneWay}" Value="{Binding ApuVddio, FallbackValue='N/A', Mode=OneWay, Converter={StaticResource FloatToVoltage}}" AllowManualVoltage="True" />
+                <local:TimingRow Label="MEM VPP" Value="{Binding VppAdcV, FallbackValue='N/A', Mode=OneWay, Converter={StaticResource FloatToVoltage}}" AllowManualVoltage="True" />
+                <local:TimingRow x:Name="rowVddMisc" Label="{Binding VmiscLabel, FallbackValue='VDD MISC', Mode=OneWay}" Value="{Binding Vmisc, FallbackValue='N/A', Mode=OneWay, Converter={StaticResource FloatToVoltage}}" AllowManualVoltage="True" />
                 <TextBlock Text="" />
                 <local:TimingRow x:Name="rowProcCaOdt" Label="ProcCaOdt" Value="N/A" IsEnabled="False" />
                 <local:TimingRow x:Name="rowProcCkOdt" Label="ProcCkOdt" Value="N/A" IsEnabled="False" />

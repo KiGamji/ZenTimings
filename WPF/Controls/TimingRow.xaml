@@ -17,8 +17,21 @@
 
         <TextBlock x:Name="ValueBlock"
                    Grid.Column="1"
+                   Background="Transparent"
+                   MouseLeftButtonDown="ValueBlock_MouseLeftButtonDown"
                    Style="{DynamicResource ValueStyles}"
                    Text="{Binding Value, RelativeSource={RelativeSource AncestorType={x:Type local:TimingRow}}}"
                    ToolTip="{Binding ValueToolTip, RelativeSource={RelativeSource AncestorType={x:Type local:TimingRow}}}" />
+
+        <TextBox x:Name="VoltageEditor"
+                 Grid.Column="1"
+                 Visibility="Collapsed"
+                 MinWidth="55"
+                 Padding="0"
+                 VerticalContentAlignment="Center"
+                 TextAlignment="Center"
+                 ToolTip="Voltage in volts (e.g. 1.35). Enter to save, Esc to cancel; clear to reset."
+                 PreviewKeyDown="VoltageEditor_PreviewKeyDown"
+                 LostKeyboardFocus="VoltageEditor_LostKeyboardFocus" />
     </Grid>
 </UserControl>
